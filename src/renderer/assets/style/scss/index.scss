@@ -1,0 +1,147 @@
+$top-height: 110px;
+$left-width: 250px;
+$footer-height: 25px;
+body {
+  background-image: none !important;
+  position: relative;
+  .splice-header {
+    height: $top-height;
+    position: fixed;
+    left: 0;
+    right: 0;
+  }
+  .splice-body {
+    .body-left {
+      width: 250px;
+      position: fixed;
+      top: $top-height;
+      bottom: $footer-height;
+      z-index: 1;
+    }
+    .body-right {
+      position: fixed;
+      top: $top-height;
+      left: $left-width;
+      bottom: $footer-height;
+      right: 0;
+      overflow: auto;
+    }
+  }
+  .splice-footer {
+    position: fixed;
+    height: $footer-height;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(#dfe9f3, #b8d7ff);
+  }
+}
+.splice-windows {
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  overflow: hidden;
+  .windows-container {
+    width: 90%;
+    height: 98%;
+    position: relative;
+    margin: auto;
+    .window {
+      background: rgb(211, 211, 211);
+      position: absolute;
+      border: 1px solid #000;
+      user-select: none;
+      .window-item {
+        border: 1px dashed #a59f9f;
+        position: absolute;
+      }
+    }
+  }
+}
+$mg: 10px;
+.window-container {
+  margin-top: 12px;
+  border: 1px solid rgb(220, 220, 220);
+  padding: 15px;
+  position: relative;
+  font-size: 12px;
+  &.p-0 {
+    padding: 0;
+  }
+  .container-title {
+    position: absolute;
+    top: -8px;
+    left: 10px;
+  }
+  .container {
+    padding: 0;
+    .el-form {
+      .el-form-item {
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+  .el-input-number--mini {
+    width: 90px;
+  }
+}
+.flex-box {
+  display: flex;
+  align-items: center;
+  .flex-label {
+    margin-right: 10px;
+  }
+  &.between {
+    justify-content: space-between;
+  }
+  .flex-1 {
+    flex: 1;
+  }
+  &.center {
+    justify-content: center;
+  }
+  &.column {
+    flex-direction: column;
+  }
+}
+.container-footer {
+  overflow: hidden;
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+.mg-l {
+  margin-left: $mg;
+}
+.mg-l-0 {
+  margin-left: 0;
+}
+.mg-r {
+  margin-right: $mg;
+}
+.mg-r-0 {
+  margin-right: 0;
+}
+.mg-t {
+  margin-top: $mg;
+}
+.mg-t-0 {
+  margin-top: 0;
+}
+.mg-b {
+  margin-bottom: $mg;
+}
+.mg-b-0 {
+  margin-bottom: 0;
+}
+
+/*右键菜单样式*/
+.vue-contextmenu-listWrapper {
+  padding-left: 0;
+  .btn-wrapper-simple {
+    height: 32px !important;
+    line-height: 32px !important;
+  }
+}

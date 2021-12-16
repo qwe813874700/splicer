@@ -1,0 +1,104 @@
+% --- Executes on button press in pb_osd_wren.
+function pb_osd_wren_Callback(hObject, eventdata, handles)
+% hObject    handle to pb_osd_wren (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global s;
+global osd_port1;
+global osd_port2;
+global osd_port3;
+global osd_port4;
+if isempty(osd_port1)    osd_port1=0;end
+if isempty(osd_port2)    osd_port2=0;end
+if isempty(osd_port3)    osd_port3=0;end
+if isempty(osd_port4)    osd_port4=0;end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%选取不同的点阵字符
+hanzi_16x16=get(handles.rb_16x16plot,'Value');
+hanzi_32x32=get(handles.rb_32x32plot,'Value');
+hanzi_scale=1;
+if(hanzi_16x16)
+    fp=fopen('H:\TW8816_DEBUG\control_input\SongTi_25_1616_gb3212.DAT','r');
+    hanzi_scale=1;
+elseif(hanzi_32x32)
+    fp=fopen('H:\TW8816_DEBUG\control_input\SongTi_25_3232_gb3212.DAT','r');
+    hanzi_scale=4;
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+fp_text= fopen('.\input_channel_osd_dec.txt','wt');
+for ch=1:16
+    switch ch
+        case 1    
+            osd_data ='输入通道01';
+        case 2   
+            osd_data ='输入通道02';
+        case 3   
+            osd_data ='输入通道03';
+        case 4  
+            osd_data ='输入通道04';
+        case 5  
+            osd_data ='输入通道05';
+        case 6  
+            osd_data ='输入通道06';
+        case 7  
+            osd_data ='输入通道07';
+        case 8   
+            osd_data ='输入通道08';
+        case 9  
+            osd_data ='输入通道09';
+        case 10  
+            osd_data ='输入通道10';
+        case 11  
+            osd_data ='输入通道11';
+        case 12  
+            osd_data ='输入通道12';
+        case 13  
+            osd_data ='输入通道13';
+        case 14  
+            osd_data ='输入通道14';
+        case 15   
+            osd_data ='输入通道15';
+        case 16 
+            osd_data ='输入通道16';
+    end
+    
+    fprintf(fp_text, '\n');
+    fprintf(fp_text, '\n');
+    fprintf(fp_text,'/*****');
+    fprintf(fp_text,'%s',osd_data);
+    fprintf(fp_text,'*****/');
+    fprintf(fp_text, '\n');
+            
+   % osd_data =get(handles.osd_data_text,'string');%待显示的字符
+    osd_len  =length(osd_data);%字符长度 
+    osd_wren=(osd_port4*8 +osd_port3*4 +osd_port2*2 +osd_port1)*8;
+    fwrite(s,[0,255,255,hex2dec('63'),255]);
+    for i=1: osd_len
+       hanzi_code   =unicode2native(osd_data(i));%求取汉字的区位码   
+       if(size(hanzi_code) <2)
+           ban_code=3;
+           row_code=double(hanzi_code(1)+128-160);
+       else
+           ban_code    =double(hanzi_code(1)-160);
+           row_code    =double(hanzi_code(2)-160);
+       end
+
+       hanzi_offset =((ban_code -1)*94 + (row_code - 1))*32*hanzi_scale;
+       fseek(fp,hanzi_offset,-1);
+       for j=1: 32*hanzi_scale;
+         plot_data =fread(fp,1,'uchar');
+        % fprintf(fp_text,'0x%02x',plot_data);
+         fprintf(fp_text,'%d',plot_data);
+         fprintf(fp_text,'%c',',');
+         if(mod(j,16)==0)         
+             fprintf(fp_text, '\n');
+         end
+         fwrite(s,[0,255,255,hex2dec('60'),plot_data]);
+         fwrite(s,[0,255,255,hex2dec('5f'),osd_wren]);
+         fwrite(s,[0,255,255,hex2dec('5f'),osd_wren+4]);%generate wren
+       end    
+    end
+end
+
+fclose(fp);
+fclose(fp_text);
